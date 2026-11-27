@@ -65,7 +65,7 @@ export default function SearchSection({
         <p className="mb-2 text-xs font-bold text-slate-500">
           または相手のタイプをタップ（最大2つまで選択可）：
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap justify-center gap-1.5">
           {ALL_TYPE_KEYS.map((typeKey) => {
             const item = TYPE_MASTER[typeKey]
             const isSelected = selectedTypes.includes(typeKey)
