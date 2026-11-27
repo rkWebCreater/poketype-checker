@@ -115,7 +115,7 @@ export const fetchRecommendedMoves = async (
 ): Promise<RecommendedMove[]> => {
 
     //弱点タイプ（）の代表技IDを集める
-    const moveIds = weakTypes.slice(0 , 3).flatMap((type) => TYPE_MASTER[type].representativeMoveIds)
+    const moveIds = weakTypes.slice(0 , 3).flatMap((type) => TYPE_MASTER[type].recommendedMoveIds)
 
     const damageClassMap : Record<string , '物理' | '特殊' | '変化'> = {
 
