@@ -8,7 +8,7 @@ export interface TypeMasterItem {
   resistantTo: PokemonTypeKey[]    // このタイプが「いまひとつ（0.5倍）」に軽減する攻撃タイプ
   immuneTo: PokemonTypeKey[]       // このタイプが「こうかなし（0倍）」にする攻撃タイプ
   representativeMoveIds: number[]  // このタイプで攻めるときの代表的な強技ID（PokeAPIのmove ID）
-  recommendedGoPokemon: string[] // ★ 追加：ポケモンGOでよく使われる代表ポケモン
+  recommendedGoPokemon: string[]   // ポケモンGOでよく使われる代表ポケモン（6匹）
 }
 
 // 18タイプのマスターデータ
@@ -19,8 +19,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fighting'],
     resistantTo: [],
     immuneTo: ['ghost'],
-    representativeMoveIds: [38, 416], // すてみタックル, ギガインパクト
-    recommendedGoPokemon: ['カビゴン', 'ヤルキモノ', 'ベロリンガ', 'ハピナス'],
+    representativeMoveIds: [38, 416, 34], // すてみタックル, ギガインパクト, のしかかり
+    recommendedGoPokemon: ['カビゴン', 'ヤルキモノ', 'ベロリンガ', 'ハピナス', 'ホルード', 'ミルタンク'],
   },
   fire: {
     nameJa: 'ほのお',
@@ -28,8 +28,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['water', 'ground', 'rock'],
     resistantTo: ['fire', 'grass', 'ice', 'bug', 'steel', 'fairy'],
     immuneTo: [],
-    representativeMoveIds: [53, 315], // かえんほうしゃ, オーバーヒート
-    recommendedGoPokemon: ['レシラム', 'リザードン', 'バシャーモ', 'ラウドボーン'],
+    representativeMoveIds: [53, 315, 307], // かえんほうしゃ, オーバーヒート, ブラストバーン
+    recommendedGoPokemon: ['レシラム', 'リザードン', 'バシャーモ', 'ラウドボーン', 'ファイヤー', 'シャンデラ'],
   },
   water: {
     nameJa: 'みず',
@@ -37,8 +37,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['electric', 'grass'],
     resistantTo: ['fire', 'water', 'ice', 'steel'],
     immuneTo: [],
-    representativeMoveIds: [57, 56], // なみのり, ハイドロポンプ
-    recommendedGoPokemon: ['カイオーガ', 'ラグラージ', 'オーダイル', 'ゲッコウガ'],
+    representativeMoveIds: [57, 56, 308], // なみのり, ハイドロポンプ, ハイドロカノン
+    recommendedGoPokemon: ['カイオーガ', 'ラグラージ', 'オーダイル', 'ゲッコウガ', 'ギャラドス', 'アシレーヌ'],
   },
   electric: {
     nameJa: 'でんき',
@@ -46,8 +46,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['ground'],
     resistantTo: ['electric', 'flying', 'steel'],
     immuneTo: [],
-    representativeMoveIds: [85, 87], // 10まんボルト, かみなり
-    recommendedGoPokemon: ['ゼクロム', 'デンジュモク', 'ランターン', 'ジバコイル'],
+    representativeMoveIds: [85, 87, 528], // 10まんボルト, かみなり, ワイルドボルト
+    recommendedGoPokemon: ['ゼクロム', 'デンジュモク', 'ランターン', 'ジバコイル', 'ライコウ', 'エレキブル'],
   },
   grass: {
     nameJa: 'くさ',
@@ -55,8 +55,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fire', 'ice', 'poison', 'flying', 'bug'],
     resistantTo: ['water', 'electric', 'grass', 'ground'],
     immuneTo: [],
-    representativeMoveIds: [76, 437], // ソーラービーム, リーフストーム
-    recommendedGoPokemon: ['カミツルギ', 'フシギバナ', 'ロズレイド', 'オーロット'],
+    representativeMoveIds: [76, 437, 338], // ソーラービーム, リーフストーム, ハードプラント
+    recommendedGoPokemon: ['カミツルギ', 'フシギバナ', 'ロズレイド', 'オーロット', 'ザルード', 'マスカーニャ'],
   },
   ice: {
     nameJa: 'こおり',
@@ -64,8 +64,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fire', 'fighting', 'rock', 'steel'],
     resistantTo: ['ice'],
     immuneTo: [],
-    representativeMoveIds: [58, 59], // れいとうビーム, ふぶき
-    recommendedGoPokemon: ['マンムー', 'セグレイブ', 'トドゼルガ', 'ユキメノコ'],
+    representativeMoveIds: [58, 59, 419], // れいとうビーム, ふぶき, ゆきなだれ
+    recommendedGoPokemon: ['マンムー', 'セグレイブ', 'トドゼルガ', 'ユキメノコ', 'マニューラ', 'グレイシア'],
   },
   fighting: {
     nameJa: 'かくとう',
@@ -73,8 +73,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['flying', 'psychic', 'fairy'],
     resistantTo: ['bug', 'rock', 'dark'],
     immuneTo: [],
-    representativeMoveIds: [370, 411], // インファイト, きあいだま
-    recommendedGoPokemon: ['ルカリオ', 'カイリキー', 'コノヨザル', 'テラキオン'],
+    representativeMoveIds: [370, 411, 223], // インファイト, きあいだま, ばくれつパンチ
+    recommendedGoPokemon: ['ルカリオ', 'カイリキー', 'コノヨザル', 'テラキオン', 'ローブシン', 'バシャーモ'],
   },
   poison: {
     nameJa: 'どく',
@@ -82,8 +82,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['ground', 'psychic'],
     resistantTo: ['grass', 'fighting', 'poison', 'bug', 'fairy'],
     immuneTo: [],
-    representativeMoveIds: [188, 441], // ヘドロばくだん, ダストシュート
-    recommendedGoPokemon: ['ウツロイド', 'ドオー', 'ベトベトン', 'ロズレイド'],
+    representativeMoveIds: [188, 441, 398], // ヘドロばくだん, ダストシュート, どくづき
+    recommendedGoPokemon: ['ウツロイド', 'ドオー', 'ベトベトン', 'ロズレイド', 'ニドクイン', 'ドクロッグ'],
   },
   ground: {
     nameJa: 'じめん',
@@ -91,8 +91,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['water', 'grass', 'ice'],
     resistantTo: ['poison', 'rock'],
     immuneTo: ['electric'],
-    representativeMoveIds: [89, 414], // じしん, だいちのちから
-    recommendedGoPokemon: ['グラードン', 'ガブリアス', 'ドリュウズ', 'ラグラージ'],
+    representativeMoveIds: [89, 414, 529], // じしん, だいちのちから, ドリルライナー
+    recommendedGoPokemon: ['グラードン', 'ガブリアス', 'ドリュウズ', 'ラグラージ', 'ランドロス', 'マンムー'],
   },
   flying: {
     nameJa: 'ひこう',
@@ -100,8 +100,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['electric', 'ice', 'rock'],
     resistantTo: ['grass', 'fighting', 'bug'],
     immuneTo: ['ground'],
-    representativeMoveIds: [413, 542], // ブレイブバード, ぼうふう
-    recommendedGoPokemon: ['レックウザ', 'ファイアロー', 'ピジョット', 'エアームド'],
+    representativeMoveIds: [413, 542, 143], // ブレイブバード, ぼうふう, ゴッドバード
+    recommendedGoPokemon: ['レックウザ', 'ファイアロー', 'ピジョット', 'エアームド', 'チルタリス', 'ムクホーク'],
   },
   psychic: {
     nameJa: 'エスパー',
@@ -109,8 +109,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['bug', 'ghost', 'dark'],
     resistantTo: ['fighting', 'psychic'],
     immuneTo: [],
-    representativeMoveIds: [94, 473], // サイコキネシス, サイコショック
-    recommendedGoPokemon: ['ミュウツー', 'クレセリア', 'サーナイト', 'メタグロス'],
+    representativeMoveIds: [94, 473, 248], // サイコキネシス, サイコショック, みらいよち
+    recommendedGoPokemon: ['ミュウツー', 'クレセリア', 'サーナイト', 'メタグロス', 'ラティオス', 'エーフィ'],
   },
   bug: {
     nameJa: 'むし',
@@ -118,8 +118,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fire', 'flying', 'rock'],
     resistantTo: ['grass', 'fighting', 'ground'],
     immuneTo: [],
-    representativeMoveIds: [404, 405], // シザークロス, むしのさざめき
-    recommendedGoPokemon: ['ウルガモス', 'ハッサム', 'フェローチェ', 'クワガノン'],
+    representativeMoveIds: [404, 405, 224], // シザークロス, むしのさざめき, メガホーン
+    recommendedGoPokemon: ['ウルガモス', 'ハッサム', 'フェローチェ', 'クワガノン', 'カイロス', 'ヘラクロス'],
   },
   rock: {
     nameJa: 'いわ',
@@ -127,17 +127,17 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['water', 'grass', 'fighting', 'ground', 'steel'],
     resistantTo: ['normal', 'fire', 'poison', 'flying'],
     immuneTo: [],
-    representativeMoveIds: [157, 444], // いわなだれ, ストーンエッジ
-    recommendedGoPokemon: ['ドサイドン', 'バンギラス', 'ラムパルド', 'トリデプス'],
-  }, 
+    representativeMoveIds: [157, 444, 439], // いわなだれ, ストーンエッジ, がんせきほう
+    recommendedGoPokemon: ['ドサイドン', 'バンギラス', 'ラムパルド', 'トリデプス', 'テラキオン', 'ギガイアス'],
+  },
   ghost: {
     nameJa: 'ゴースト',
     bgClass: 'bg-indigo-800 text-white',
     weakTo: ['ghost', 'dark'],
     resistantTo: ['poison', 'bug'],
     immuneTo: ['normal', 'fighting'],
-    representativeMoveIds: [247, 421], // シャドーボール, シャドークロー
-    recommendedGoPokemon: ['ギラティナ', 'ゲンガー', 'ラウドボーン', 'ヤミラミ'],
+    representativeMoveIds: [247, 421, 325], // シャドーボール, シャドークロー, シャドーパンチ
+    recommendedGoPokemon: ['ギラティナ', 'ゲンガー', 'ラウドボーン', 'ヤミラミ', 'シャンデラ', 'オーロット'],
   },
   dragon: {
     nameJa: 'ドラゴン',
@@ -145,8 +145,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['ice', 'dragon', 'fairy'],
     resistantTo: ['fire', 'water', 'electric', 'grass'],
     immuneTo: [],
-    representativeMoveIds: [434, 200], // りゅうせいぐん, げきりん
-    recommendedGoPokemon: ['レックウザ', 'カイリュー', 'ディアルガ', 'ガブリアス'],
+    representativeMoveIds: [434, 200, 337], // りゅうせいぐん, げきりん, ドラゴンクロー
+    recommendedGoPokemon: ['レックウザ', 'カイリュー', 'ディアルガ', 'ガブリアス', 'パルキア', 'ボーマンダ'],
   },
   dark: {
     nameJa: 'あく',
@@ -154,8 +154,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fighting', 'bug', 'fairy'],
     resistantTo: ['ghost', 'dark'],
     immuneTo: ['psychic'],
-    representativeMoveIds: [399, 242], // あくのはどう, かみくだく
-    recommendedGoPokemon: ['バンギラス', 'サザンドラ', 'ブラッキー', 'アクジキング'],
+    representativeMoveIds: [399, 242, 492], // あくのはどう, かみくだく, イカサマ
+    recommendedGoPokemon: ['バンギラス', 'サザンドラ', 'ブラッキー', 'アクジキング', 'ダークライ', 'マニューラ'],
   },
   steel: {
     nameJa: 'はがね',
@@ -163,8 +163,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['fire', 'fighting', 'ground'],
     resistantTo: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel', 'fairy'],
     immuneTo: ['poison'],
-    representativeMoveIds: [430, 442], // ラスターカノン, アイアンヘッド
-    recommendedGoPokemon: ['メタグロス', 'ディアルガ', 'レジスチル', 'ドリュウズ'],
+    representativeMoveIds: [430, 442, 309], // ラスターカノン, アイアンヘッド, コメットパンチ
+    recommendedGoPokemon: ['メタグロス', 'ディアルガ', 'レジスチル', 'ドリュウズ', 'ハッサム', 'メルメタル'],
   },
   fairy: {
     nameJa: 'フェアリー',
@@ -172,8 +172,8 @@ export const TYPE_MASTER: Record<PokemonTypeKey, TypeMasterItem> = {
     weakTo: ['poison', 'steel'],
     resistantTo: ['fighting', 'bug', 'dark'],
     immuneTo: ['dragon'],
-    representativeMoveIds: [585, 605], // ムーンフォース, マジカルシャイン
-    recommendedGoPokemon: ['サーナイト', 'トゲキッス', 'マリルリ', 'ニンフィア'],
+    representativeMoveIds: [585, 605, 583], // ムーンフォース, マジカルシャイン, じゃれつく
+    recommendedGoPokemon: ['サーナイト', 'トゲキッス', 'マリルリ', 'ニンフィア', 'アシレーヌ', 'グランブル'],
   },
 }
 
