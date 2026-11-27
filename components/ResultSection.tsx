@@ -164,7 +164,7 @@ export default function ResultSection({
                 {selectedTypes.map((t) => (
                   <span
                     key={t}
-                    className={`rounded-full px-5 py-1.5 text-lg font-bold shadow-sm ${TYPE_MASTER[t].bgClass}`}
+                    className={`rounded-full px-3 py-1.5 text-lg font-bold shadow-sm ${TYPE_MASTER[t].bgClass}`}
                   >
                     {TYPE_MASTER[t].nameJa}
                   </span>
