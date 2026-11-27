@@ -265,7 +265,7 @@ export default function ResultSection({
       <section className={cardClass}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-extrabold text-slate-800">
-            💡 一番こうかばつぐんのおすすめ技 ＆ 定番ポケモン
+            💡 こうかばつぐんのおすすめ技 & 定番ポケモン
           </h3>
           <span className="text-[11px] text-slate-400">
             ポケモン名をクリックするとそのポケモンを検索できます
