@@ -185,8 +185,8 @@ function HomeContent() {
               </h1>
               <p className="text-[11px] font-medium text-slate-500">
                 {isGo
-                  ? 'Pokémon GO ver. （レイド・GBL倍率 & GO種族値）'
-                  : '本家 ver.（4倍 / 2倍 / 無効 & 6種族値）'}
+                  ? 'Pokémon GO ver. (レイド・GBL倍率 & GO種族値）'
+                  : '   本家 ver.    (4倍 / 2倍 / 無効 & 6種族値）'}
               </p>
             </div>
           </div>
