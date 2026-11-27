@@ -180,13 +180,22 @@ function HomeContent() {
               P
             </span>
             <div>
-              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-white-900">
+              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-white">
                 ポケモンタイプ相性検索
               </h1>
-              <p className="text-[11px] font-medium text-slate-500">
-                {isGo
-                  ? 'Pokémon GO ver. (レイド・GBL倍率 & GO種族値）'
-                  : '   本家 ver.    (4倍 / 2倍 / 無効 & 6種族値）'}
+              <p className="grid text-[11px] font-medium text-slate-500">
+                <span
+                  aria-hidden={!isGo}
+                  className={`col-start-1 row-start-1 ${isGo ? 'visible' : 'invisible'}`}
+                >
+                  Pokémon GO ver.（レイド・GBL倍率 &amp; GO種族値）
+                </span>
+                <span
+                  aria-hidden={isGo}
+                  className={`col-start-1 row-start-1 ${!isGo ? 'visible' : 'invisible'}`}
+                >
+                  本家 ver.（4倍 / 2倍 / 無効 &amp; 6種族値）
+                </span>
               </p>
             </div>
           </div>
