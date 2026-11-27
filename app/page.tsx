@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import ModeSwitch from '@/components/ModeSwitch'
 import ResultSection from '@/components/ResultSection'
 import SearchSection from '@/components/SearchSection'
+import { TYPE_MASTER } from '@/constants/pokemonTypes'
 import type {
   GameMode,
   PokemonInfo,
@@ -13,7 +15,10 @@ import type {
 import { fetchPokemon, fetchRecommendedMoves } from '@/utils/pokeapi'
 import { calcWeakness } from '@/utils/pokemonCalc'
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const [mode, setMode] = useState<GameMode>('main')
   const [pokemon, setPokemon] = useState<PokemonInfo | null>(null)
   const [selectedTypes, setSelectedTypes] = useState<PokemonTypeKey[]>([])
@@ -23,77 +28,125 @@ export default function Home() {
   const [error, setError] = useState('')
 
   const isGo = mode === 'go'
+  const pokemonParam = searchParams.get('pokemon')
+  const typesParam = searchParams.get('types')
 
-  // 弱点タイプに応じたおすすめ技を取得する共通処理
-  const loadBestMoves = async (targetTypes: PokemonTypeKey[]) => {
-    const analysis = calcWeakness(targetTypes, mode)
-    // 二重弱点があればそれを最優先、なければ通常弱点から選ぶ
-    const priorityTypes =
-      analysis.doubleWeak.length > 0
-        ? analysis.doubleWeak.map((item) => item.type)
-        : analysis.weak.map((item) => item.type)
+  // URL クエリ（?pokemon=... / ?types=...）の変化を監視して検索・復元する
+  useEffect(() => {
+    let cancelled = false
 
-    setIsMovesLoading(true)
-    try {
-      const recommended = await fetchRecommendedMoves(priorityTypes)
-      setMoves(recommended)
-    } finally {
-      setIsMovesLoading(false)
+    const loadBestMoves = async (targetTypes: PokemonTypeKey[]) => {
+      // 弱点タイプ自体は本家・GOで共通なので 'main' 基準で優先弱点を抽出
+      const analysis = calcWeakness(targetTypes, 'main')
+      const priorityTypes =
+        analysis.doubleWeak.length > 0
+          ? analysis.doubleWeak.map((item) => item.type)
+          : analysis.weak.map((item) => item.type)
+
+      setIsMovesLoading(true)
+      try {
+        const recommended = await fetchRecommendedMoves(priorityTypes)
+        if (!cancelled) {
+          setMoves(recommended)
+        }
+      } finally {
+        if (!cancelled) {
+          setIsMovesLoading(false)
+        }
+      }
     }
-  }
 
-  // ポケモン名・図鑑番号で検索したとき
-  const handleSearchPokemon = async (query: string) => {
-    setIsLoading(true)
+    // パターン1：URL に ?pokemon=... があるとき
+    if (pokemonParam) {
+      const run = async () => {
+        setIsLoading(true)
+        setError('')
+        setSelectedTypes([])
+        setMoves([])
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+
+        try {
+          const data = await fetchPokemon(pokemonParam)
+          if (cancelled) return
+          setPokemon(data)
+          await loadBestMoves(data.types)
+        } catch (err) {
+          if (cancelled) return
+          setPokemon(null)
+          setError(err instanceof Error ? err.message : '検索に失敗しました')
+        } finally {
+          if (!cancelled) {
+            setIsLoading(false)
+          }
+        }
+      }
+      run()
+      return () => {
+        cancelled = true
+      }
+    }
+
+    // パターン2：URL に ?types=... があるとき
+    if (typesParam) {
+      const parsedTypes = typesParam
+        .split(',')
+        .filter((t): t is PokemonTypeKey => t in TYPE_MASTER)
+        .slice(0, 2)
+
+      setIsLoading(false)
+      setError('')
+      setPokemon(null)
+      setSelectedTypes(parsedTypes)
+      setMoves([])
+
+      if (parsedTypes.length > 0) {
+        loadBestMoves(parsedTypes)
+      }
+      return () => {
+        cancelled = true
+      }
+    }
+
+    // パターン3：URL が /（パラメータなし）のとき → 初期状態に戻す
+    setIsLoading(false)
+    setIsMovesLoading(false)
     setError('')
+    setPokemon(null)
     setSelectedTypes([])
     setMoves([])
 
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+    return () => {
+      cancelled = true
     }
+  }, [pokemonParam, typesParam])
 
-    try {
-      const data = await fetchPokemon(query)
-      setPokemon(data)
-      await loadBestMoves(data.types)
-    } catch (err) {
-      setPokemon(null)
-      setError(err instanceof Error ? err.message : '検索に失敗しました')
-    } finally {
-      setIsLoading(false)
-    }
+  // ポケモン名・図鑑番号で検索したとき（URL を更新して履歴に残す）
+  const handleSearchPokemon = (query: string) => {
+    router.push(`/?pokemon=${encodeURIComponent(query)}`)
   }
 
-  // タイプボタンを直接タップしたとき（最大2つまで選択可）
-  const handleSelectType = async (typeKey: PokemonTypeKey) => {
-    setError('')
-    setPokemon(null)
-
+  // タイプボタンを直接タップしたとき（最大2つまで選択可・URL を更新して履歴に残す）
+  const handleSelectType = (typeKey: PokemonTypeKey) => {
     let nextTypes: PokemonTypeKey[]
     if (selectedTypes.includes(typeKey)) {
-      // すでに選択中なら解除
       nextTypes = selectedTypes.filter((t) => t !== typeKey)
     } else if (selectedTypes.length < 2) {
-      // 2個未満なら追加
       nextTypes = [...selectedTypes, typeKey]
     } else {
-      // 2個選択済みなら、1個目を入れ替え
       nextTypes = [selectedTypes[1], typeKey]
     }
 
-    setSelectedTypes(nextTypes)
-    setMoves([])
-
     if (nextTypes.length > 0) {
-      await loadBestMoves(nextTypes)
+      router.push(`/?types=${nextTypes.join(',')}`)
+    } else {
+      router.push('/')
     }
   }
 
   // 表示対象のタイプ配列
   const activeTypes: PokemonTypeKey[] = pokemon ? pokemon.types : selectedTypes
 
-  // mode が切り替わった瞬間に自動で再計算される（useEffect不要！）
+  // mode が切り替わった瞬間に自動で再計算される
   const weakness = activeTypes.length > 0 ? calcWeakness(activeTypes, mode) : null
 
   return (
@@ -115,7 +168,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-4xl px-4 py-6 space-y-5">
         {/* ヘッダー（タイトル ＋ 右上の本家/GO切替スイッチ） */}
-        <header className="flex flex-wrap items-center justify-center gap-3">
+        <header className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <span
               className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-black text-white shadow-sm transition-all duration-300 ${
@@ -197,5 +250,19 @@ export default function Home() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-100 p-8 text-center text-sm text-slate-500">
+          読み込み中...
+        </div>
+      }
+    >
+      <HomeContent />
+    </Suspense>
   )
 }
