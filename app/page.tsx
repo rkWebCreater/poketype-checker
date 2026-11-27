@@ -153,7 +153,7 @@ function HomeContent() {
     <div
       className={`min-h-screen transition-colors duration-300 ${
         isGo
-          ? 'bg-gradient-to-b from-sky-50 via-teal-50/40 to-emerald-50/40 text-slate-800'
+          ? 'bg-gradient-to-b from-blue-950/[0.06] via-indigo-50/60 to-sky-50/50 text-slate-800'
           : 'bg-slate-100 text-slate-900'
       }`}
     >
@@ -161,7 +161,7 @@ function HomeContent() {
       <div
         className={`h-1.5 w-full transition-all duration-300 ${
           isGo
-            ? 'bg-gradient-to-r from-sky-400 via-teal-400 to-emerald-400'
+            ? 'bg-gradient-to-r from-blue-950 via-blue-800 to-indigo-900'
             : 'bg-gradient-to-r from-rose-600 via-red-500 to-rose-600'
         }`}
       />
@@ -173,7 +173,7 @@ function HomeContent() {
             <span
               className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-black text-white shadow-sm transition-all duration-300 ${
                 isGo
-                  ? 'bg-gradient-to-br from-emerald-400 to-teal-500'
+                  ? 'bg-gradient-to-br from-blue-950 to-indigo-800'
                   : 'bg-rose-600'
               }`}
             >
