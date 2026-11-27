@@ -153,7 +153,7 @@ function HomeContent() {
     <div
       className={`min-h-screen transition-colors duration-300 ${
         isGo
-          ? 'bg-gradient-to-b from-blue-950/[0.06] via-indigo-50/60 to-sky-50/50 text-slate-800'
+          ? 'bg-gradient-to-b from-blue-950/[0.06] via-indigo-50/60 to-sky-50/50 text-white-800'
           : 'bg-slate-100 text-slate-900'
       }`}
     >
@@ -185,8 +185,8 @@ function HomeContent() {
               </h1>
               <p className="text-[11px] font-medium text-slate-500">
                 {isGo
-                  ? 'Pokémon GO モード（レイド・GBL倍率 & GO種族値）'
-                  : '本家モード（4倍 / 2倍 / 無効 & 6種族値）'}
+                  ? 'Pokémon GO ver. （レイド・GBL倍率 & GO種族値）'
+                  : '本家 ver.（4倍 / 2倍 / 無効 & 6種族値）'}
               </p>
             </div>
           </div>
