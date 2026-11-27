@@ -12,7 +12,7 @@ export default function ModeSwitch({ mode, onChangeMode }: ModeSwitchProps) {
     <div
       className={`inline-flex rounded-full p-1 text-xs sm:text-sm font-bold transition-all duration-300 ${
         isGo
-          ? 'bg-white/90 border border-teal-200 shadow-sm shadow-teal-100/70'
+          ? 'bg-white/90 border border-blue-900/20 shadow-sm shadow-blue-900/10'
           : 'bg-slate-200/90 border border-slate-300/60'
       }`}
     >
@@ -32,7 +32,7 @@ export default function ModeSwitch({ mode, onChangeMode }: ModeSwitchProps) {
         onClick={() => onChangeMode('go')}
         className={`rounded-full px-3.5 sm:px-4 py-1.5 transition-all duration-300 cursor-pointer ${
           isGo
-            ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white shadow-sm shadow-teal-200'
+            ? 'bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 text-white shadow-sm shadow-blue-900/30'
             : 'text-slate-600 hover:text-slate-900'
         }`}
       >

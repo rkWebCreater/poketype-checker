@@ -139,19 +139,19 @@ export default function ResultSection({
                         label="HP"
                         value={pokemon.goStats.hp}
                         max={350}
-                        barClass="bg-gradient-to-r from-emerald-400 to-teal-500"
+                        barClass="bg-gradient-to-r from-blue-900 to-indigo-700"
                       />
                       <StatBar
                         label="攻撃"
                         value={pokemon.goStats.attack}
                         max={350}
-                        barClass="bg-gradient-to-r from-sky-400 to-teal-500"
+                        barClass="bg-gradient-to-r from-blue-800 to-sky-600"
                       />
                       <StatBar
                         label="防御"
                         value={pokemon.goStats.defense}
                         max={350}
-                        barClass="bg-gradient-to-r from-teal-400 to-cyan-500"
+                        barClass="bg-gradient-to-r from-indigo-900 to-blue-700"
                       />
                     </>
                   )}
@@ -188,7 +188,7 @@ export default function ResultSection({
             <span
               className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                 isGo
-                  ? 'bg-teal-50 text-teal-700 border border-teal-200/80'
+                  ? 'bg-blue-950/10 text-blue-900 border border-blue-900/20'
                   : 'bg-rose-50 text-rose-700 border border-rose-200/80'
               }`}
             >
@@ -309,7 +309,7 @@ export default function ResultSection({
                         onClick={() => onSelectPokemon(pokeName)}
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold transition cursor-pointer ${
                           isGo
-                            ? 'bg-white text-teal-700 border border-teal-200 hover:bg-teal-500 hover:text-white'
+                            ? 'bg-white text-blue-900 border border-blue-900/25 hover:bg-blue-900 hover:text-white'
                             : 'bg-white text-slate-700 border border-slate-300 hover:bg-rose-600 hover:text-white hover:border-rose-600'
                         }`}
                       >
