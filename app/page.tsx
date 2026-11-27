@@ -180,10 +180,18 @@ function HomeContent() {
               P
             </span>
             <div>
-              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-white">
+              <h1
+                className={`text-lg sm:text-xl font-extrabold tracking-tight transition-colors duration-300 ${
+                  isGo ? 'text-white' : 'text-slate-900'
+                }`}
+              >
                 ポケモンタイプ相性検索
               </h1>
-              <p className="grid text-[11px] font-medium text-slate-500">
+              <p
+                className={`grid text-[11px] font-medium transition-colors duration-300 ${
+                  isGo ? 'text-slate-200' : 'text-slate-500'
+                }`}
+              >
                 <span
                   aria-hidden={!isGo}
                   className={`col-start-1 row-start-1 ${isGo ? 'visible' : 'invisible'}`}
