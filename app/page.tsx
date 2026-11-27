@@ -115,7 +115,7 @@ export default function Home() {
 
       <div className="mx-auto max-w-4xl px-4 py-6 space-y-5">
         {/* ヘッダー（タイトル ＋ 右上の本家/GO切替スイッチ） */}
-        <header className="flex flex-wrap items-center justify-between gap-3">
+        <header className="flex flex-wrap items-center justify-center gap-3">
           <div className="flex items-center gap-2.5">
             <span
               className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-black text-white shadow-sm transition-all duration-300 ${
