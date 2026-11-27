@@ -180,13 +180,13 @@ function HomeContent() {
               P
             </span>
             <div>
-              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">
+              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-white-900">
                 ポケモンタイプ相性検索
               </h1>
               <p className="text-[11px] font-medium text-slate-500">
                 {isGo
-                  ? 'Pokémon GO モード（レイド・GBL倍率 ＆ GO種族値）'
-                  : '本家モード（4倍 / 2倍 / 無効 ＆ 6種族値）'}
+                  ? 'Pokémon GO モード（レイド・GBL倍率 & GO種族値）'
+                  : '本家モード（4倍 / 2倍 / 無効 & 6種族値）'}
               </p>
             </div>
           </div>
