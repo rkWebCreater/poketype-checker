@@ -153,7 +153,7 @@ function HomeContent() {
     <div
       className={`min-h-screen transition-colors duration-300 ${
         isGo
-          ? 'bg-gradient-to-b from-blue-950/[0.06] via-indigo-50/60 to-sky-50/50 text-white-800'
+          ? 'bg-gradient-to-b from-slate-950 via-blue-950 to-indigo-950 text-slate-900'
           : 'bg-slate-100 text-slate-900'
       }`}
     >
@@ -255,10 +255,10 @@ function HomeContent() {
           !isLoading &&
           !error && (
             <div
-              className={`p-8 text-center text-sm text-slate-500 border border-dashed transition-all duration-300 ${
+              className={`p-8 text-center text-sm border border-dashed transition-all duration-300 ${
                 isGo
-                  ? 'rounded-3xl border-teal-200 bg-white/60'
-                  : 'rounded-2xl border-slate-300 bg-white/60'
+                  ? 'rounded-3xl border-blue-400/30 bg-white/10 text-slate-200'
+                  : 'rounded-2xl border-slate-300 bg-white/60 text-slate-500'
               }`}
             >
               ポケモン名を入力するか、上のタイプボタン（最大2つ）をタップすると弱点とおすすめ技が表示されます。
