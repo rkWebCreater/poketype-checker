@@ -128,7 +128,7 @@ export default function Home() {
             </span>
             <div>
               <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">
-                ポケモンタイプ相性チェッカー
+                ポケモンタイプ相性検索
               </h1>
               <p className="text-[11px] font-medium text-slate-500">
                 {isGo
