@@ -58,8 +58,8 @@ export default function ResultSection({
   const isGo = mode === 'go'
 
   const cardClass = isGo
-    ? 'rounded-3xl bg-white/90 backdrop-blur border border-teal-100 shadow-md shadow-sky-100/60 transition-all duration-300'
-    : 'rounded-2xl bg-white border border-slate-200 shadow-sm transition-all duration-300'
+    ? 'rounded-2xl p-3 bg-white/90 backdrop-blur border border-teal-100 shadow-md shadow-sky-100/60 transition-all duration-300'
+    : 'rounded-xl p-3 bg-white border border-slate-200 shadow-sm transition-all duration-300'
 
   const primaryType = pokemon?.types[0] ?? selectedTypes[0] ?? null
 
