@@ -75,7 +75,7 @@ export default function ResultSection({
       {/* 上段：基本情報 ＋ 弱点タイプ */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* 左：ポケモン基本情報（タイプ直接検索時はタイプ名のみ表示） */}
-        <section className={`${cardClass} relative overflow-hidden`}>
+        <section className={`${cardClass} relative overflow-hidden md:flex md:items-center md:justify-center`}>
           {/* タイプカラーのアクセントライン */}
           {primaryType && (
             <div
@@ -84,7 +84,7 @@ export default function ResultSection({
           )}
 
           {pokemon ? (
-            <div className="flex flex-col items-center text-center gap-4 pt-1 sm:flex-row sm:items-start sm:text-left">
+            <div className="flex w-full flex-col items-center text-center gap-4 pt-1 sm:flex-row sm:items-start sm:text-left md:h-full md:items-center md:justify-center">
               {pokemon.imageUrl && (
                 <div
                   className={`relative flex h-32 w-32 shrink-0 items-center justify-center transition-all duration-300 ${
@@ -99,6 +99,7 @@ export default function ResultSection({
                     width={112}
                     height={112}
                     className="h-28 w-28 object-contain drop-shadow-sm"
+                    
                   />
                 </div>
               )}
