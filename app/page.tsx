@@ -176,23 +176,10 @@ function HomeContent() {
     router.push(buildUrl({ pokemon: query }))
   }
 
-  // タイプボタンを直接タップしたとき（最大2つまで選択可・URL を更新して履歴に残す）
-  const handleSelectType = (typeKey: PokemonTypeKey) => {
-    let nextTypes: PokemonTypeKey[]
-
-    if (selectedTypes.includes(typeKey)) {
-      nextTypes = selectedTypes.filter((t) => t !== typeKey)
-    } else if (selectedTypes.length < 2) {
-      nextTypes = [...selectedTypes, typeKey]
-    } else {
-      nextTypes = [selectedTypes[1], typeKey]
-    }
-
-    router.push(buildUrl({ types: nextTypes }))
-  }
-
-  const handleClearTypes = () => {
-    router.push(buildUrl({}))
+  // 選択したタイプ（1〜2つ）で検索を実行したとき（URL を更新して履歴に残す）
+  const handleSearchTypes = (types: PokemonTypeKey[]) => {
+    router.push(buildUrl({ types }))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // mode が切り替わった瞬間に自動で再計算される
@@ -265,8 +252,7 @@ function HomeContent() {
           mode={mode}
           currentQuery={pokemonParam ?? ''}
           onSearchPokemon={handleSearchPokemon}
-          onSelectType={handleSelectType}
-          onClearTypes={handleClearTypes}
+          onSearchTypes={handleSearchTypes}
           selectedTypes={selectedTypes}
           isLoading={isLoading}
         />
