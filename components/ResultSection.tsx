@@ -321,8 +321,8 @@ export default function ResultSection({
                   key={typeKey}
                   className={`flex flex-wrap items-center gap-2 p-2.5 border ${
                     isGo
-                      ? 'rounded-2xl border-teal-100 bg-sky-50/40'
-                      : 'rounded-xl border-slate-200 bg-slate-50/80'
+                      ? 'rounded-2xl border-slate-100 bg-slate-50/40'
+                      : 'rounded-xl border-gray-200 bg-slate-50/80'
                   }`}
                 >
                   <span
@@ -374,8 +374,8 @@ export default function ResultSection({
                 key={move.id}
                 className={`p-3.5 border transition-all ${
                   isGo
-                    ? 'rounded-2xl border-teal-100 bg-sky-50/40'
-                    : 'rounded-xl border-slate-200 bg-slate-50/80'
+                    ? 'rounded-2xl border-slate-100 bg-slate-50/40'
+                    : 'rounded-xl border-gray-200 bg-slate-50/80'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">

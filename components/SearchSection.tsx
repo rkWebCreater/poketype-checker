@@ -227,7 +227,7 @@ export default function SearchSection({
               type="button"
               onClick={() => setIsDrawerOpen(true)}
               aria-label="検索エリアを開く"
-              className={`fixed bottom-5 right-4 md:bottom-6 md:right-6 z-30 inline-flex items-center gap-1.5 rounded-full px-4 py-3 md:px-5 md:py-3.5 text-sm font-extrabold text-white shadow-lg transition active:scale-95 cursor-pointer ${
+              className={`fixed bottom-5 right-4 md:bottom-6 md:right-6 z-30 inline-flex items-center gap-1.5 rounded-full px-4 py-3 md:px-5 md:py-3.5 text-sm font-extrabold text-white shadow-lg border-[5px] border-white/30 transition active:scale-95 cursor-pointer ${
                 isGo
                   ? 'bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 shadow-blue-950/40 ring-1 ring-blue-300/30 hover:from-blue-900 hover:to-indigo-800'
                   : 'bg-rose-600 shadow-rose-600/35 hover:bg-rose-700'
