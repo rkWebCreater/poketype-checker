@@ -18,6 +18,7 @@ export default function ModeSwitch({ mode, onChangeMode }: ModeSwitchProps) {
     >
       <button
         type="button"
+        aria-pressed={!isGo}
         onClick={() => onChangeMode('main')}
         className={`rounded-full px-3.5 sm:px-4 py-1.5 transition-all duration-300 cursor-pointer ${
           !isGo
@@ -29,6 +30,7 @@ export default function ModeSwitch({ mode, onChangeMode }: ModeSwitchProps) {
       </button>
       <button
         type="button"
+        aria-pressed={isGo}
         onClick={() => onChangeMode('go')}
         className={`rounded-full px-3.5 sm:px-4 py-1.5 transition-all duration-300 cursor-pointer ${
           isGo

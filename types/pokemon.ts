@@ -7,6 +7,14 @@ export type PokemonTypeKey =
 //ポケモンのゲームモードの型定義 本家かポケモンGOかを判定するための型
 export type GameMode = 'main' | 'go'
 
+// フォルム切替ボタン用のデータ（通常 / メガシンカ）
+export interface PokemonFormOption {
+  slug: string
+  label: string
+  query: string
+  isCurrent: boolean
+}
+
 // 画面に表示するポケモンの基本データ
 export interface PokemonInfo {
   id: number
@@ -16,6 +24,7 @@ export interface PokemonInfo {
   types: PokemonTypeKey[]
   stats: MainStats    // 本家用
   goStats: GoStats    // ポケモンGO用
+  forms: PokemonFormOption[] // メガシンカ等のフォルム一覧
 }
 // 本家の種族値（6項目：PokeAPIから直接取得）
 export interface MainStats {
@@ -41,7 +50,6 @@ export interface RecommendedMove {
   type: PokemonTypeKey
   power: number | null
   damageClass: '物理' | '特殊' | '変化'
-  learnedBy: string[] // この技を覚える代表ポケモン名
 }
 
 // 1つの攻撃タイプごとの倍率結果

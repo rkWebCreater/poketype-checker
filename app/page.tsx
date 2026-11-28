@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import ModeSwitch from '@/components/ModeSwitch'
 import ResultSection from '@/components/ResultSection'
@@ -19,115 +19,167 @@ function HomeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [mode, setMode] = useState<GameMode>('main')
-  const [pokemon, setPokemon] = useState<PokemonInfo | null>(null)
-  const [selectedTypes, setSelectedTypes] = useState<PokemonTypeKey[]>([])
-  const [moves, setMoves] = useState<RecommendedMove[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isMovesLoading, setIsMovesLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [retryCount, setRetryCount] = useState(0)
+  const [fetchedPokemon, setFetchedPokemon] = useState<{
+    requestKey: string
+    data: PokemonInfo | null
+    error: string
+  } | null>(null)
+  const [fetchedMoves, setFetchedMoves] = useState<{
+    key: string
+    items: RecommendedMove[]
+    error: string
+  } | null>(null)
 
+  const mode: GameMode = searchParams.get('mode') === 'go' ? 'go' : 'main'
   const isGo = mode === 'go'
   const pokemonParam = searchParams.get('pokemon')
   const typesParam = searchParams.get('types')
+  const pokemonRequestKey = pokemonParam ? `${pokemonParam}#${retryCount}` : ''
 
-  // URL クエリ（?pokemon=... / ?types=...）の変化を監視して検索・復元する
+  // ?types=... から選択タイプを直接導出（pokemonParam がある場合は空）
+  const selectedTypes = useMemo<PokemonTypeKey[]>(() => {
+    if (pokemonParam || !typesParam) return []
+    return typesParam
+      .split(',')
+      .filter((t): t is PokemonTypeKey => t in TYPE_MASTER)
+      .slice(0, 2)
+  }, [pokemonParam, typesParam])
+
+  const pokemon =
+    pokemonRequestKey && fetchedPokemon?.requestKey === pokemonRequestKey
+      ? fetchedPokemon.data
+      : null
+  const error =
+    pokemonRequestKey && fetchedPokemon?.requestKey === pokemonRequestKey
+      ? fetchedPokemon.error
+      : ''
+  const isLoading = Boolean(
+    pokemonRequestKey && fetchedPokemon?.requestKey !== pokemonRequestKey
+  )
+
+  // 表示対象のタイプ配列
+  const activeTypes = useMemo<PokemonTypeKey[]>(
+    () => (pokemon ? pokemon.types : selectedTypes),
+    [pokemon, selectedTypes]
+  )
+  const activeTypesKey = activeTypes.join(',')
+
+  const moves =
+    activeTypesKey && fetchedMoves?.key === activeTypesKey
+      ? fetchedMoves.items
+      : []
+  const movesError =
+    activeTypesKey && fetchedMoves?.key === activeTypesKey
+      ? fetchedMoves.error
+      : ''
+  const isMovesLoading = Boolean(
+    activeTypesKey && fetchedMoves?.key !== activeTypesKey
+  )
+
+  // URL クエリ（?pokemon=...）の変化を監視してポケモン情報を取得
   useEffect(() => {
+    if (!pokemonParam || !pokemonRequestKey) return
     let cancelled = false
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
-    const loadBestMoves = async (targetTypes: PokemonTypeKey[]) => {
-      // 弱点タイプ自体は本家・GOで共通なので 'main' 基準で優先弱点を抽出
-      const analysis = calcWeakness(targetTypes, 'main')
-      const priorityTypes =
-        analysis.doubleWeak.length > 0
-          ? analysis.doubleWeak.map((item) => item.type)
-          : analysis.weak.map((item) => item.type)
-
-      setIsMovesLoading(true)
-      try {
-        const recommended = await fetchRecommendedMoves(priorityTypes)
+    fetchPokemon(pokemonParam)
+      .then((data) => {
         if (!cancelled) {
-          setMoves(recommended)
+          setFetchedPokemon({ requestKey: pokemonRequestKey, data, error: '' })
         }
-      } finally {
+      })
+      .catch((err) => {
         if (!cancelled) {
-          setIsMovesLoading(false)
+          setFetchedPokemon({
+            requestKey: pokemonRequestKey,
+            data: null,
+            error: err instanceof Error ? err.message : '検索に失敗しました',
+          })
         }
-      }
-    }
-
-    // パターン1：URL に ?pokemon=... があるとき
-    if (pokemonParam) {
-      const run = async () => {
-        setIsLoading(true)
-        setError('')
-        setSelectedTypes([])
-        setMoves([])
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-
-        try {
-          const data = await fetchPokemon(pokemonParam)
-          if (cancelled) return
-          setPokemon(data)
-          await loadBestMoves(data.types)
-        } catch (err) {
-          if (cancelled) return
-          setPokemon(null)
-          setError(err instanceof Error ? err.message : '検索に失敗しました')
-        } finally {
-          if (!cancelled) {
-            setIsLoading(false)
-          }
-        }
-      }
-      run()
-      return () => {
-        cancelled = true
-      }
-    }
-
-    // パターン2：URL に ?types=... があるとき
-    if (typesParam) {
-      const parsedTypes = typesParam
-        .split(',')
-        .filter((t): t is PokemonTypeKey => t in TYPE_MASTER)
-        .slice(0, 2)
-
-      setIsLoading(false)
-      setError('')
-      setPokemon(null)
-      setSelectedTypes(parsedTypes)
-      setMoves([])
-
-      if (parsedTypes.length > 0) {
-        loadBestMoves(parsedTypes)
-      }
-      return () => {
-        cancelled = true
-      }
-    }
-
-    // パターン3：URL が /（パラメータなし）のとき → 初期状態に戻す
-    setIsLoading(false)
-    setIsMovesLoading(false)
-    setError('')
-    setPokemon(null)
-    setSelectedTypes([])
-    setMoves([])
+      })
 
     return () => {
       cancelled = true
     }
-  }, [pokemonParam, typesParam])
+  }, [pokemonParam, pokemonRequestKey])
+
+  // 表示対象のタイプが変わったらおすすめ技を取得
+  useEffect(() => {
+    if (!activeTypesKey) return
+    let cancelled = false
+    const targetTypes = activeTypesKey.split(',') as PokemonTypeKey[]
+    // 弱点タイプ自体は本家・GOで共通なので 'main' 基準で優先弱点を抽出
+    const analysis = calcWeakness(targetTypes, 'main')
+    const priorityTypes =
+      analysis.doubleWeak.length > 0
+        ? analysis.doubleWeak.map((item) => item.type)
+        : analysis.weak.map((item) => item.type)
+
+    fetchRecommendedMoves(priorityTypes)
+      .then((recommended) => {
+        if (!cancelled) {
+          setFetchedMoves({ key: activeTypesKey, items: recommended, error: '' })
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setFetchedMoves({
+            key: activeTypesKey,
+            items: [],
+            error: 'おすすめ技の取得に失敗しました。時間をおいて再度お試しください。',
+          })
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [activeTypesKey])
+
+  const buildUrl = (next: {
+    mode?: GameMode
+    pokemon?: string | null
+    types?: PokemonTypeKey[]
+  }) => {
+    const params = new URLSearchParams()
+    const targetMode = next.mode ?? mode
+    if (targetMode === 'go') {
+      params.set('mode', 'go')
+    }
+    if (next.pokemon) {
+      params.set('pokemon', next.pokemon)
+    } else if (next.types && next.types.length > 0) {
+      params.set('types', next.types.join(','))
+    }
+    const qs = params.toString()
+    return qs ? `/?${qs}` : '/'
+  }
+
+  // 本家 / ポケモンGO モード切替（履歴を増やさず URL に反映）
+  const handleChangeMode = (newMode: GameMode) => {
+    router.replace(
+      buildUrl({
+        mode: newMode,
+        pokemon: pokemonParam,
+        types: pokemonParam ? undefined : selectedTypes,
+      })
+    )
+  }
 
   // ポケモン名・図鑑番号で検索したとき（URL を更新して履歴に残す）
   const handleSearchPokemon = (query: string) => {
-    router.push(`/?pokemon=${encodeURIComponent(query)}`)
+    if (query === pokemonParam) {
+      setRetryCount((c) => c + 1)
+      return
+    }
+    router.push(buildUrl({ pokemon: query }))
   }
 
   // タイプボタンを直接タップしたとき（最大2つまで選択可・URL を更新して履歴に残す）
   const handleSelectType = (typeKey: PokemonTypeKey) => {
     let nextTypes: PokemonTypeKey[]
+
     if (selectedTypes.includes(typeKey)) {
       nextTypes = selectedTypes.filter((t) => t !== typeKey)
     } else if (selectedTypes.length < 2) {
@@ -136,15 +188,12 @@ function HomeContent() {
       nextTypes = [selectedTypes[1], typeKey]
     }
 
-    if (nextTypes.length > 0) {
-      router.push(`/?types=${nextTypes.join(',')}`)
-    } else {
-      router.push('/')
-    }
+    router.push(buildUrl({ types: nextTypes }))
   }
 
-  // 表示対象のタイプ配列
-  const activeTypes: PokemonTypeKey[] = pokemon ? pokemon.types : selectedTypes
+  const handleClearTypes = () => {
+    router.push(buildUrl({}))
+  }
 
   // mode が切り替わった瞬間に自動で再計算される
   const weakness = activeTypes.length > 0 ? calcWeakness(activeTypes, mode) : null
@@ -208,14 +257,16 @@ function HomeContent() {
             </div>
           </div>
 
-          <ModeSwitch mode={mode} onChangeMode={setMode} />
+          <ModeSwitch mode={mode} onChangeMode={handleChangeMode} />
         </header>
 
         {/* 検索フォーム ＆ タイプボタン */}
         <SearchSection
           mode={mode}
+          currentQuery={pokemonParam ?? ''}
           onSearchPokemon={handleSearchPokemon}
           onSelectType={handleSelectType}
+          onClearTypes={handleClearTypes}
           selectedTypes={selectedTypes}
           isLoading={isLoading}
         />
@@ -248,6 +299,7 @@ function HomeContent() {
             selectedTypes={selectedTypes}
             weakness={weakness}
             moves={moves}
+            movesError={movesError}
             isMovesLoading={isMovesLoading}
             onSelectPokemon={handleSearchPokemon}
           />

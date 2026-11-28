@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { TYPE_MASTER } from '@/constants/pokemonTypes'
 import type {
   GameMode,
@@ -13,6 +14,7 @@ interface ResultSectionProps {
   selectedTypes: PokemonTypeKey[]
   weakness: WeaknessAnalysis
   moves: RecommendedMove[]
+  movesError?: string
   isMovesLoading: boolean
   onSelectPokemon: (name: string) => void
 }
@@ -52,10 +54,15 @@ export default function ResultSection({
   selectedTypes,
   weakness,
   moves,
+  movesError,
   isMovesLoading,
   onSelectPokemon,
 }: ResultSectionProps) {
   const isGo = mode === 'go'
+  const priorityWeakTypes =
+    weakness.doubleWeak.length > 0
+      ? weakness.doubleWeak.map((item) => item.type)
+      : weakness.weak.map((item) => item.type)
 
   const cardClass = isGo
     ? 'rounded-2xl p-3 bg-white/90 backdrop-blur border border-teal-100 shadow-md shadow-sky-100/60 transition-all duration-300'
@@ -86,9 +93,11 @@ export default function ResultSection({
                       : 'rounded-2xl bg-slate-100/90 p-2 border border-slate-200/70'
                   }`}
                 >
-                  <img
+                  <Image
                     src={pokemon.imageUrl}
                     alt={pokemon.nameJa}
+                    width={112}
+                    height={112}
                     className="h-28 w-28 object-contain drop-shadow-sm"
                   />
                 </div>
@@ -122,6 +131,33 @@ export default function ResultSection({
                   ))}
                 </div>
 
+                {/* メガシンカ切替ボタン（対応ポケモンのみ表示） */}
+                {pokemon.forms.length > 1 && (
+                  <div className="mt-2.5 flex flex-wrap justify-center sm:justify-start gap-1.5">
+                    {pokemon.forms.map((form) => (
+                      <button
+                        key={form.slug}
+                        type="button"
+                        aria-pressed={form.isCurrent}
+                        onClick={() => {
+                          if (!form.isCurrent) onSelectPokemon(form.query)
+                        }}
+                        className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold transition cursor-pointer ${
+                          form.isCurrent
+                            ? isGo
+                              ? 'bg-blue-900 text-white shadow-xs'
+                              : 'bg-rose-600 text-white shadow-xs'
+                            : isGo
+                              ? 'bg-blue-50 text-blue-900 border border-blue-900/20 hover:bg-blue-100'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+                        }`}
+                      >
+                        {form.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* モード別ステータスゲージ（本家6項目 / GO3項目） */}
                 <div className="mt-4 space-y-1.5">
                   {!isGo ? (
@@ -153,6 +189,9 @@ export default function ResultSection({
                         max={350}
                         barClass="bg-gradient-to-r from-indigo-900 to-blue-700"
                       />
+                      <p className="pt-1 text-[10px] text-slate-400">
+                        ※ 一部ポケモンのCP調整（9%弱体化）は未反映の概算値です
+                      </p>
                     </>
                   )}
                 </div>
@@ -261,19 +300,70 @@ export default function ResultSection({
         </section>
       </div>
 
-      {/* 下段：おすすめの技と覚えるポケモン */}
+      {/* 下段：弱点を突ける定番ポケモン（タイプ別） */}
+      {priorityWeakTypes.length > 0 && (
+        <section className={cardClass}>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-extrabold text-slate-800">
+              ⭐ 弱点を突けるタイプ別 定番ポケモン
+            </h3>
+            <span className="text-[11px] text-slate-400">
+              ポケモン名をクリックするとそのポケモンを検索できます
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            {priorityWeakTypes.map((typeKey) => {
+              const master = TYPE_MASTER[typeKey]
+              return (
+                <div
+                  key={typeKey}
+                  className={`flex flex-wrap items-center gap-2 p-2.5 border ${
+                    isGo
+                      ? 'rounded-2xl border-teal-100 bg-sky-50/40'
+                      : 'rounded-xl border-slate-200 bg-slate-50/80'
+                  }`}
+                >
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-bold shrink-0 ${master.bgClass}`}
+                  >
+                    {master.nameJa}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {master.recommendedGoPokemon.map((pokeName) => (
+                      <button
+                        key={pokeName}
+                        type="button"
+                        onClick={() => onSelectPokemon(pokeName)}
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold transition cursor-pointer ${
+                          isGo
+                            ? 'bg-white text-blue-900 border border-blue-900/25 hover:bg-blue-900 hover:text-white'
+                            : 'bg-white text-slate-700 border border-slate-300 hover:bg-rose-600 hover:text-white hover:border-rose-600'
+                        }`}
+                      >
+                        {pokeName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* 最下段：こうかばつぐんのおすすめ技 */}
       <section className={cardClass}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-extrabold text-slate-800">
-            💡 こうかばつぐんのおすすめ技 & 定番ポケモン
+            💡 こうかばつぐんのおすすめ技
           </h3>
-          <span className="text-[11px] text-slate-400">
-            ポケモン名をクリックするとそのポケモンを検索できます
-          </span>
         </div>
 
         {isMovesLoading ? (
           <p className="text-sm text-slate-500 animate-pulse">おすすめ技を取得中...</p>
+        ) : movesError ? (
+          <p className="text-sm font-medium text-red-600">{movesError}</p>
         ) : moves.length === 0 ? (
           <p className="text-sm text-slate-500">おすすめの技が見つかりませんでした。</p>
         ) : (
@@ -299,25 +389,6 @@ export default function ResultSection({
                   分類: <span className="font-semibold text-slate-700">{move.damageClass}</span> / 威力:{' '}
                   <span className="font-semibold text-slate-700">{move.power ?? '-'}</span>
                 </p>
-
-                {move.learnedBy.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                    {move.learnedBy.map((pokeName) => (
-                      <button
-                        key={pokeName}
-                        type="button"
-                        onClick={() => onSelectPokemon(pokeName)}
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold transition cursor-pointer ${
-                          isGo
-                            ? 'bg-white text-blue-900 border border-blue-900/25 hover:bg-blue-900 hover:text-white'
-                            : 'bg-white text-slate-700 border border-slate-300 hover:bg-rose-600 hover:text-white hover:border-rose-600'
-                        }`}
-                      >
-                        {pokeName}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
           </div>

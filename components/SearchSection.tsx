@@ -6,27 +6,72 @@ import type { GameMode, PokemonTypeKey } from '@/types/pokemon'
 
 interface SearchSectionProps {
   mode: GameMode
+  currentQuery: string
   onSearchPokemon: (query: string) => void
   onSelectType: (type: PokemonTypeKey) => void
+  onClearTypes: () => void
   selectedTypes: PokemonTypeKey[]
   isLoading: boolean
 }
 
-export default function SearchSection({
-  mode,
-  onSearchPokemon,
-  onSelectType,
-  selectedTypes,
+function SearchForm({
+  initialKeyword,
+  isGo,
   isLoading,
-}: SearchSectionProps) {
-  const [keyword, setKeyword] = useState('')
-  const isGo = mode === 'go'
+  onSearchPokemon,
+}: {
+  initialKeyword: string
+  isGo: boolean
+  isLoading: boolean
+  onSearchPokemon: (query: string) => void
+}) {
+  const [keyword, setKeyword] = useState(initialKeyword)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!keyword.trim() || isLoading) return
     onSearchPokemon(keyword.trim())
   }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-2">
+      <input
+        type="text"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        aria-label="ポケモン名または図鑑番号"
+        placeholder="ポケモン名または図鑑番号（例: カイリュー, メガリザードンX, アローラライチュウ）"
+        className={`min-w-0 flex-1 border px-3 sm:px-4 py-2 sm:py-2.5 text-sm transition-all focus:outline-none focus:ring-2 ${
+          isGo
+            ? 'rounded-full border-blue-900/20 bg-blue-50/40 focus:border-blue-900 focus:ring-blue-900/20'
+            : 'rounded-xl border-slate-300 bg-slate-50/50 focus:border-rose-500 focus:ring-rose-200/70'
+        }`}
+      />
+      <button
+        type="submit"
+        disabled={isLoading}
+        className={`shrink-0 whitespace-nowrap px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-bold text-white transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+          isGo
+            ? 'rounded-full bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 shadow-sm shadow-blue-900/30 hover:from-blue-900 hover:to-indigo-800'
+            : 'rounded-xl bg-rose-600 shadow-sm hover:bg-rose-700'
+        }`}
+      >
+        {isLoading ? '検索中...' : '検索'}
+      </button>
+    </form>
+  )
+}
+
+export default function SearchSection({
+  mode,
+  currentQuery,
+  onSearchPokemon,
+  onSelectType,
+  onClearTypes,
+  selectedTypes,
+  isLoading,
+}: SearchSectionProps) {
+  const isGo = mode === 'go'
 
   return (
     <section
@@ -36,35 +81,29 @@ export default function SearchSection({
           : 'rounded-2xl bg-white border border-slate-200 shadow-sm'
       }`}
     >
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          type="text"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="ポケモン名または図鑑番号（例: カイリュー, リザードン, 149）"
-          className={`min-w-0 flex-1 border px-3 sm:px-4 py-2 sm:py-2.5 text-sm transition-all focus:outline-none focus:ring-2 ${
-            isGo
-              ? 'rounded-full border-blue-900/20 bg-blue-50/40 focus:border-blue-900 focus:ring-blue-900/20'
-              : 'rounded-xl border-slate-300 bg-slate-50/50 focus:border-rose-500 focus:ring-rose-200/70'
-          }`}
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !keyword.trim()}
-          className={`shrink-0 whitespace-nowrap px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-bold text-white transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-            isGo
-              ? 'rounded-full bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-900 shadow-sm shadow-blue-900/30 hover:from-blue-900 hover:to-indigo-800'
-              : 'rounded-xl bg-rose-600 hover:bg-rose-700'
-          }`}
-        >
-          {isLoading ? '検索中...' : '検索'}
-        </button>
-      </form>
+      <SearchForm
+        key={currentQuery}
+        initialKeyword={currentQuery}
+        isGo={isGo}
+        isLoading={isLoading}
+        onSearchPokemon={onSearchPokemon}
+      />
 
       <div className="mt-4">
-        <p className="mb-2 text-xs font-bold text-slate-500">
-          または相手のタイプをタップ（最大2つまで選択可）：
-        </p>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-xs font-bold text-slate-500">
+            または相手のタイプをタップ（最大2つまで選択可）：
+          </p>
+          {selectedTypes.length > 0 && (
+            <button
+              type="button"
+              onClick={onClearTypes}
+              className="text-xs font-bold text-slate-500 underline-offset-2 hover:text-slate-800 hover:underline cursor-pointer"
+            >
+              選択をクリア
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-1.5">
           {ALL_TYPE_KEYS.map((typeKey) => {
             const item = TYPE_MASTER[typeKey]
@@ -73,6 +112,7 @@ export default function SearchSection({
               <button
                 key={typeKey}
                 type="button"
+                aria-pressed={isSelected}
                 onClick={() => onSelectType(typeKey)}
                 className={`rounded-full px-3 py-1 text-xs font-bold transition-all cursor-pointer ${
                   item.bgClass
