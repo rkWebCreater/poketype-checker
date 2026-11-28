@@ -98,20 +98,9 @@ function SearchPanelContent({
       </form>
 
       <div className="mt-4">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-bold text-slate-500">
-            または相手のタイプを選択（最大2つ）して検索：
-          </p>
-          {draftTypes.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setDraftTypes([])}
-              className="text-xs font-bold text-slate-500 underline-offset-2 hover:text-slate-800 hover:underline cursor-pointer"
-            >
-              選択をクリア
-            </button>
-          )}
-        </div>
+        <p className="mb-2 text-xs font-bold text-slate-500">
+          または相手のタイプを選択（最大2つ）して検索：
+        </p>
 
         <div className="flex flex-wrap gap-1.5">
           {ALL_TYPE_KEYS.map((typeKey) => {
@@ -140,10 +129,14 @@ function SearchPanelContent({
         </div>
 
         {draftTypes.length > 0 && (
-          <div className="mt-3 flex items-center justify-end gap-2">
-            <span className="text-xs font-semibold text-slate-500">
-              {draftTypes.map((t) => TYPE_MASTER[t].nameJa).join(' / ')}
-            </span>
+          <div className="mt-3 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => setDraftTypes([])}
+              className="text-xs font-bold text-slate-500 underline-offset-2 hover:text-slate-800 hover:underline cursor-pointer"
+            >
+              選択をクリア
+            </button>
             <button
               type="button"
               disabled={isLoading}
